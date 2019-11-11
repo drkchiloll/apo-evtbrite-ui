@@ -5,13 +5,14 @@ export class Api {
 	public request: AxiosInstance;
 	constructor() {
 		this.request = axios.create({
-			baseURL: 'http://localhost:8012/api'
+			baseURL: 'http://localhost:5000'
 		})
 	}
   getEvents() {
 		return this.request.get('/events').then(({ data }) => {
-			if(!data) return eventsJson;
-			return data;
+			console.log(data)
+    if(!data || data === '0') return eventsJson.events;
+			return data.events;
 		});
 	}
 	getCategories() {
@@ -24,9 +25,18 @@ export class Api {
 			return `data:image/jpeg;base64,${img}`;
 		})
 	}
+	searchEvents(text: string) {
+		return this.request.post('/event/search', {text}).then(({ data }) => {
+			if(!data || data === '0') return eventsJson.events;
+			return data.events;
+		})
+	}
 	getSaved() {
 		return this.request.get('/events/saved').then(({data}) => {
-			return data;
+			if(data.events === 0) {
+				return [];
+			}
+			return data.events;
 		})
 	}
 	saveEvent(event) {

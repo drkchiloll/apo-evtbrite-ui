@@ -1,12 +1,16 @@
 import * as React from 'react';
 import {
-  createStyles, makeStyles, Theme
+  createStyles, makeStyles, Theme, fade
 } from '@material-ui/core/styles';
 import {
   AppBar, Toolbar, IconButton,
-  Typography, Button, Switch
+  Typography, Button, Switch,
+  InputBase
 } from '@material-ui/core';
-import { Menu as MenuIcon } from '@material-ui/icons';
+import {
+  Menu as MenuIcon,
+  Search as SearchIcon
+} from '@material-ui/icons';
 
 const useStyles: any = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,7 +18,44 @@ const useStyles: any = makeStyles((theme: Theme) =>
     menuButton: {
       marginRight: theme.spacing(2)
     },
-    title: { flexGrow: 1 }
+    title: { flexGrow: 1 },
+    search: {
+      position: 'relative',
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: fade(theme.palette.common.white, 0.15),
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.white, 0.25),
+      },
+      marginLeft: 0,
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+      },
+    },
+    searchIcon: {
+      width: theme.spacing(7),
+      height: '100%',
+      position: 'absolute',
+      pointerEvents: 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      padding: theme.spacing(1, 1, 1, 7),
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: 120,
+        '&:focus': {
+          width: 200,
+        },
+      },
+    }
   })
 );
 
@@ -36,6 +77,28 @@ export const ButtonAppBar = (props: any) => {
           <Typography variant='h6' className={classes.title}>
             Austin Texas Happenings
           </Typography>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+              value={props.searchText}
+              onChange={e => {
+                props.searchChange(e.target.value)
+              }}
+              onKeyPress={e => {
+                if(e.which === 13) {
+                  props.performSearch()
+                }
+              }}
+            />
+          </div>
           <Switch
             checked={favoriteToggle}
             onChange={props.toggleFavorites}

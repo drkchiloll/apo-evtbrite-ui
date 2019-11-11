@@ -15,6 +15,9 @@ const useStyles: any = makeStyles((theme: Theme) =>
   createStyles({
     card: {
       maxWidth: 500,
+      maxHeight: 600,
+      height: 600,
+      overflow: 'auto'
     },
     media: {
       height: 0,
@@ -41,14 +44,14 @@ export const EvtBriteCard = (props: any) => {
   const { event } = props;
 	return (
 		<Card className={classes.card} elevation={3}>
-			<CardHeader title={event.name}/>
 			<CardMedia
 				component='img'
 				image={event.logoUrl}
 			/>
+			<CardHeader title={event.name}/>
 			<CardContent>
 				<Typography gutterBottom variant='subtitle1' component='h1'>
-					<strong> Address: { event.venueAddress } </strong>
+					<strong>Address:</strong> { event.venueAddress }
 				</Typography>
 				<Typography>
 					Start: {moment(event.start).format('MMMM Do YYYY, h:mm a')}

@@ -2,7 +2,7 @@ import * as React from "react";
 import { hot } from "react-hot-loader";
 import "./../assets/scss/App.scss";
 import { Api } from '../service/api';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import * as promise from 'bluebird';
 import { ButtonAppBar } from './EvtBriteBar';
 import { EvtBriteCard } from './EvtBriteCard';
@@ -14,7 +14,8 @@ class App extends React.Component<{}, any> {
 		this.state = {
 			events: null,
 			favoriteToggle: false,
-			favorites: [] 
+			favorites: [],
+			searchText: ''
 		}
 	}
 	componentDidMount() {
@@ -29,15 +30,17 @@ class App extends React.Component<{}, any> {
 	}
 	handleFavSelect = event => {
 		const { events, favorites } = this.state;
-		const selEventIdx = events.findIndex(e => e.id === event.id);
+		const selEventIdx = events.findIndex(e => e.id == event.id);
 		if(event.favorite) {
 			events[selEventIdx].favorite = true;
 			favorites.push(events[selEventIdx]);
 			this.setState({ events, favorites });
 			return this.api.saveEvent(event)
 		} else {
-			events[selEventIdx].favorite = false;
-			const favIdx = favorites.findIndex(e => e.id === event.id);
+			if(selEventIdx >= 0) {
+				events[selEventIdx].favorite = false;
+			}
+			const favIdx = favorites.findIndex(e => e.id == event.id);
 			favorites.splice(favIdx, 1);
 			this.setState({ events, favorites })
 			return this.api.deleteSaved(event)
@@ -57,12 +60,23 @@ class App extends React.Component<{}, any> {
 		})
 	}
 	render() {
-		const { events, favoriteToggle, favorites } = this.state;
+		const { events, favoriteToggle, favorites, searchText } = this.state;
 		return (
 			<div>
 				<ButtonAppBar
 					toggleFavorites={this.handleFavToggle}
 					favoriteToggle={favoriteToggle}
+					searchText={searchText}
+					searchChange={val => {
+						this.setState({ searchText: val })
+					}}
+					performSearch={() => {
+						if(searchText) {
+							this.api.searchEvents(searchText).then(events => {
+								this.setState({ events })
+							})
+						}
+					}}
 				/>
 				<Grid container spacing={3}>
 					{
